@@ -20,6 +20,11 @@ x_train = data_train[1:n]
 x_train = x_train / 255.
 _,m_train = x_train.shape
 
+"""
+data dev is a matrix[10 x 1000] where each row represents a image 
+data train is a matrix[10 x 41000] where each row represents a image 
+"""
+
 def init_params():
     W1 =np.random.rand(10, 784) - 0.5
     b1 =np.random.rand(10, 1) - 0.5
@@ -27,6 +32,12 @@ def init_params():
     b2 =np.random.rand(10, 1) - 0.5
     return W1,b1,W2,b2
 
+"""
+W1 is weight matrix[10 x 784] b/w input and hidden layer
+b1 is the bias for the hidden layer
+W2 is weight matrix[10 x 10] b/w hidden layer and output 
+b2 is the bias for the output layer
+"""
 def relu(z):
     return np.maximum(0,z)
 
@@ -39,6 +50,16 @@ def forward_prop(W1,b1,W2,b2,X):
     Z2=W2.dot(A1) +b2
     A2 =softmax(Z2)
     return Z1, A1, Z2, A2
+
+"""
+Z1 is a matrix[10 x 41000] storing values of all the hidden nodes for all images 
+each column contains the values of all 10 nodes for all the images
+
+A1 is after neglecting all negative values
+
+Z2 is same for output layer
+A2 is after neglecting all negative values
+"""
  
 def one_hot(y):
     one_hot_y= np.zeros((y.size, y.max()+1))
@@ -58,7 +79,12 @@ def back_prop(Z1,A1,Z2,A2,W2,X,Y):
     dW1 = 1/m * dZ1.dot(X.T)
     dB1 = 1/m * np.sum(dZ1)
     return dW1,dB1,dW2,dB2
-
+"""
+dZ2 is the difference b/w predicted output and correct output
+dW2 is avg of all difference b/w predicted and correct output multiplied with values of hidden layer
+dB2 is the avg of sum of all the difference b/w predicted and correct output
+similarly calculating dZ1, dW1 and dB1
+"""
 def update_params(W1,b1,W2,b2,dW1,dB1,dW2,dB2,alpha):
     W1 =W1 -alpha*dW1
     b1 =b1 -alpha*dB1
@@ -85,7 +111,7 @@ def gradiant_descent(X,Y,alpha,iterations):
             print("accuracy: ",get_accuracy(predictions,Y))
     return W1,b1,W2,b2
    
-W1,b1,W2,b2 = gradiant_descent(x_train,y_train,0.10,500)
+W1,b1,W2,b2 = gradiant_descent(x_train,y_train,0.50,1000)
 
 def make_predictions(X, W1, b1, W2, b2):
     _, _, _, A2 = forward_prop(W1, b1, W2, b2, X)
@@ -104,10 +130,10 @@ def test_prediction(index, W1, b1, W2, b2):
     plt.imshow(current_image, interpolation='nearest')
     plt.show()
     
-# test_prediction(0, W1, b1, W2, b2)
-# test_prediction(1, W1, b1, W2, b2)
-# test_prediction(2, W1, b1, W2, b2)
-# test_prediction(3, W1, b1, W2, b2)
+test_prediction(0, W1, b1, W2, b2)
+test_prediction(1, W1, b1, W2, b2)
+test_prediction(2, W1, b1, W2, b2)
+test_prediction(3, W1, b1, W2, b2)
 
 dev_predictions = make_predictions(x_dev, W1, b1, W2, b2)
 print(get_accuracy(dev_predictions, y_dev))
